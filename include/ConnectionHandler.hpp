@@ -6,9 +6,10 @@
 class ConnectionHandler {
 public:
     ConnectionHandler(int clientSocket, const std::string& clientLabel);
-    void sendMessage(const std::string& message);
+    void sendMessage(std::string& message);
     std::string getClientLabel() const;
     int getSocket() const;
+    void setClientLabel(std::string newNick);
 
 private:
     int clientSocket;

@@ -21,7 +21,20 @@ void handleClient(std::shared_ptr<ConnectionHandler> conn,
     while (true) {
         char buffer[1024] = {0};
         int bytes = recv(clientSocket, buffer, sizeof(buffer), 0);
+        std::string rawContent(buffer, bytes);
+        if (rawContent.starts_with("/nick ")) {
+            std::string newNick = rawContent.substr(6);
+            newNick.erase(std::remove(newNick.begin(), newNick.end(), '\n'), newNick.end());
+            newNick.erase(std::remove(newNick.begin(), newNick.end(), '\r'), newNick.end());
 
+            newNick.erase(newNick.find_last_not_of(" ") + 1);
+
+            if (!newNick.empty()) {
+                std::cout << conn->getClientLabel() << " changed nickname to " << newNick << std::endl;
+                conn->setClientLabel(newNick);
+            }
+            continue;
+        }
         if (bytes == -1) {
             std::cerr << std::format("receiving data with recv failed from {}", clientSocket) << std::endl;
             break;
