@@ -78,3 +78,25 @@ bind: Address already in use
 but since we are implementing SO_REUSEADDR, we can bind to this port
 even if there are sockets still in TIME_WAIT.
 
+goal for end of spring break
+concurrent lobby chat with nicknames
+
+project sequence after this one
+chat-server -> epoll server -> redis-clone -> limit-order-book -> message-broker
+
+Data structure to store connetions:
+ConnectionHandler(socket, client_label, nickname): 
+    sends data to that client
+    maybe basic metadata access
+
+Server/shared state:
+    Owns:
+        collection of active connections
+        mutex protecting that collection
+    Responsible for:
+        register connection
+        unregister connection
+        broadcast message to all connections
+
+
+

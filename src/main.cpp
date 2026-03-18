@@ -6,7 +6,18 @@
 #include <cstring>
 #include <thread>
 #include <format>
-void handleClient(int clientSocket) {
+#include <memory>
+#include <mutex>
+#include "../include/ConnectionHandler.hpp"
+#include <algorithm>
+#include <vector>
+
+
+void handleClient(std::shared_ptr<ConnectionHandler> conn,
+                  std::vector<std::shared_ptr<ConnectionHandler>>& connections,
+                  std::mutex& connectionsMutex) {
+    int clientSocket = conn->getSocket();
+
     while (true) {
         char buffer[1024] = {0};
         int bytes = recv(clientSocket, buffer, sizeof(buffer), 0);
@@ -14,20 +25,33 @@ void handleClient(int clientSocket) {
         if (bytes == -1) {
             std::cerr << std::format("receiving data with recv failed from {}", clientSocket) << std::endl;
             break;
-            }
+        }
+
         if (bytes == 0) {
             std::cout << std::format("client {} has disconnected", clientSocket) << std::endl;
             break;
-            }
-        
-        //Process data and send a response
-        if (send(clientSocket, buffer, bytes, 0) == -1) {
-            std::cerr << std::format("send failed from {}", clientSocket) << std::endl;
-            break;
+        }
+
+        std::string message = conn->getClientLabel() + ": " + std::string(buffer, bytes);
+
+        {
+            std::scoped_lock lock(connectionsMutex);
+            for (const auto& connection : connections) {
+                connection->sendMessage(message);
             }
         }
-        close(clientSocket);
     }
+
+    {
+        std::scoped_lock lock(connectionsMutex);
+        connections.erase(
+            std::remove(connections.begin(), connections.end(), conn),
+            connections.end()
+        );
+    }
+
+    close(clientSocket);
+}
 std::string get_peer_ip_address(int client_socket_fd) {
     struct sockaddr_storage addr;
     socklen_t len = sizeof(addr);
@@ -69,26 +93,40 @@ int main() {
         return 1;
     }
 
+    //
+    std::vector<std::shared_ptr<ConnectionHandler>> connections;
+    std::mutex connectionsMutex;
+
+
     //listening for connections on the socket once its all binded
     if (listen(serverSocket, 5) == -1) {
-        std::cerr << "socked listening failed" << std::endl;
+        std::cerr << "socket listening failed" << std::endl;
         return 1;
     }
     while (true) {
+
     //accept client connection
     sockaddr_in clientAddress;
     socklen_t clientSize = sizeof(clientAddress);
     int clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddress, &clientSize);
-    if (clientSocket > 0) {
-        std::string peer_ipaddr = get_peer_ip_address(clientSocket);
-        std::cout << std::format("client {} connected from {}", std::to_string(clientSocket), peer_ipaddr) << std::endl;
-    }
+    //accept fail check
     if (clientSocket == -1) {
         std::cerr << "accept failed" << std::endl;
         break;
     }
+
+    
+    std::string peer_ipaddr = get_peer_ip_address(clientSocket);
+    std::cout << std::format("client {} connected from {}", std::to_string(clientSocket), peer_ipaddr) << std::endl;
+    auto conn = std::make_shared<ConnectionHandler>(clientSocket, peer_ipaddr);
+    {
+        std::scoped_lock lock(connectionsMutex);
+        connections.push_back(conn);
+    }
+    
+    
     //client loop, detached
-    std::thread client_thread(handleClient, clientSocket);
+    std::thread client_thread(handleClient, conn, std::ref(connections), std::ref(connectionsMutex));
     if (client_thread.joinable()) {
         client_thread.detach();
     }
