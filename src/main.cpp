@@ -26,27 +26,11 @@ void handleClient(std::shared_ptr<ConnectionHandler> conn,
         if (rawContent.starts_with("/nick ")) {
             std::string newNick = rawContent.substr(6);
             Commands::setNewNickname(conn, newNick);
-            /* newNick.erase(std::remove(newNick.begin(), newNick.end(), '\n'), newNick.end());
-            newNick.erase(std::remove(newNick.begin(), newNick.end(), '\r'), newNick.end());
-
-            newNick.erase(newNick.find_last_not_of(" ") + 1);
-
-            if (!newNick.empty()) {
-                std::cout << conn->getClientLabel() << " changed nickname to " << newNick << std::endl;
-                conn->setClientLabel(newNick);
-            } */
             continue;
         }
         if (rawContent.starts_with("/join ")) {
             std::string newRoom = rawContent.substr(6);
             Commands::joinNewRoom(conn, newRoom);
-            /* newRoom.erase(std::remove(newRoom.begin(), newRoom.end(), '\n'), newRoom.end());
-            newRoom.erase(std::remove(newRoom.begin(), newRoom.end(), '\r'), newRoom.end());
-            newRoom.erase(newRoom.find_last_not_of(" ") + 1);
-            if (!newRoom.empty()) {
-                std::cout << conn->getClientLabel() << " moved to room: " << newRoom << std::endl;
-                conn->changeRoom(newRoom);
-            } */
             continue;
         }
         if (bytes == -1) {
