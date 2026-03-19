@@ -3,7 +3,7 @@
 This is a project inspired by my original Chat App which you can see at [https:](https://github.com/alancw2/chat-app)
 
 ## Build and Run
-```` sh
+``` sh
 # compile 
 make
 
@@ -23,6 +23,6 @@ make run_client
 ss -ltnp | grep 8080
 ```
 and kill whatever process is using the address with 
-```` sh
+``` sh
 kill <PID>
 ```
