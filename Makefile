@@ -37,7 +37,7 @@ $(SRC_DIR)/Client.o: $(SRC_DIR)/Client.cpp
 
 clean:
 	rm -f $(SRC_DIR)/*.o $(SERVER_TARGET) $(CLIENT_TARGET)
-
+	rm -f *.o main
 run_server: $(SERVER_TARGET)
 	./$(SERVER_TARGET)
 
