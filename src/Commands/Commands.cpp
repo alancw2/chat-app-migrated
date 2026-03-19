@@ -1,6 +1,7 @@
 #include "../../include/Commands.hpp"
 #include "../../include/ConnectionHandler.hpp"
 #include <iostream>
+
 void Commands::joinNewRoom(std::shared_ptr<ConnectionHandler> conn, std::string& newRoom) {
     newRoom.erase(std::remove(newRoom.begin(), newRoom.end(), '\n'), newRoom.end());
     newRoom.erase(std::remove(newRoom.begin(), newRoom.end(), '\r'), newRoom.end());
@@ -14,12 +15,15 @@ void Commands::setNewNickname(std::shared_ptr<ConnectionHandler> conn, std::stri
     newNick.erase(std::remove(newNick.begin(), newNick.end(), '\n'), newNick.end());
     newNick.erase(std::remove(newNick.begin(), newNick.end(), '\r'), newNick.end());
     newNick.erase(newNick.find_last_not_of(" ") + 1);
+
     if (!newNick.empty()) {
+        std::cerr << "0 - nickname change success" << std::endl;
         conn->setClientLabel(newNick);
     } else {
         std::cerr << "1 - nickname change fail (bad nickname)" << std::endl;
         return;
     }
+
 } 
 std::string Commands::getUsersInRoom(std::shared_ptr<ConnectionHandler> conn, std::vector<std::shared_ptr<ConnectionHandler>>& connections) {
     std::string users = "";
@@ -31,4 +35,13 @@ std::string Commands::getUsersInRoom(std::shared_ptr<ConnectionHandler> conn, st
     }
     return users;
     
+}
+bool Commands::nickAvailable(std::vector<std::shared_ptr<ConnectionHandler>>& connections, const std::string& newNick) {
+    for (const auto& connection : connections) {
+        if (connection->getClientLabel() == newNick) {
+            std::cerr << "2 - nickname change fail (taken nickname)" << std::endl;
+            return false;
+        }
+    }
+    return true;
 }
