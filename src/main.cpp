@@ -96,7 +96,7 @@ int main() {
     //creating the socket and server address/port
     int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket == -1) {
-        std::cerr << "socket creation failed" << std::endl;
+        std::cerr << "server socket creation failed" << std::endl;
         return 1;
     }
     struct sockaddr_in serverAddress;

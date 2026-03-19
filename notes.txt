@@ -114,9 +114,7 @@ Current:
 
 Next:
 -/who (prints people in current room)
--system join/leave messages
--improve parsing / cleanup
-
+-basic client with send/receive threads
 
 
 
