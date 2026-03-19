@@ -26,6 +26,9 @@ void broadcastMessage(std::shared_ptr<ConnectionHandler> conn, std::vector<std::
 void handleClient(std::shared_ptr<ConnectionHandler> conn,
                   std::vector<std::shared_ptr<ConnectionHandler>>& connections,
                   std::mutex& connectionsMutex) {
+
+    
+
     int clientSocket = conn->getSocket();
     char buffer[1024] = {0};
     while (true) {
@@ -34,20 +37,22 @@ void handleClient(std::shared_ptr<ConnectionHandler> conn,
         std::string rawContent(buffer, bytes);
         if (rawContent.starts_with("/nick ")) {
             std::string newNick = rawContent.substr(6);
-            const std::string& message = std::format("{} has changed their nickname to {}", conn->getClientLabel(), newNick);
-
-            if (newNick == "") {
-                const std::string& nick_failed = "nickname change has failed \n";
-                conn->sendMessage(nick_failed);
+            if (Commands::nickAvailable(connections, newNick)) {
+                const std::string& message = std::format("{} has changed their nickname to {}", conn->getClientLabel(), newNick);
+                if (newNick == "") {
+                    const std::string& nick_failed = "nickname change has failed \n";
+                    conn->sendMessage(nick_failed);
+                    continue;
+                }         
+                broadcastMessage(conn, connections, connectionsMutex, message);
+                Commands::setNewNickname(conn, newNick);
                 continue;
-            }         
-            //const std::string& message = std::format("{} has changed their nickname to {}", conn->getClientLabel(), newNick);
-            //std::string& m = message;
-            broadcastMessage(conn, connections, connectionsMutex, message);
-            Commands::setNewNickname(conn, newNick);
-            //std::string& message = std::ref(std::format(""))
+        } else {
+            const std::string& nick_failed = "nickname is already taken. \n";
+            conn->sendMessage(nick_failed);
             continue;
         }
+    }
         if (rawContent.starts_with("/join ")) {
             std::string newRoom = rawContent.substr(6);
             const std::string& move_message = std::format("{} has moved to room {}", conn->getClientLabel(), newRoom);
@@ -59,7 +64,6 @@ void handleClient(std::shared_ptr<ConnectionHandler> conn,
         }
         if (rawContent.starts_with("/who")) {
             conn->sendMessage(Commands::getUsersInRoom(conn, connections));
-            //broadcastMessage(conn, connections, connectionsMutex, Commands::getUsersInRoom(conn, connections));
             continue;
         }
         if (bytes == -1) {
@@ -86,7 +90,8 @@ void handleClient(std::shared_ptr<ConnectionHandler> conn,
     }
 
     close(clientSocket);
-}
+    }
+
 std::string get_peer_ip_address(int client_socket_fd) {
     struct sockaddr_storage addr;
     socklen_t len = sizeof(addr);
@@ -101,7 +106,6 @@ std::string get_peer_ip_address(int client_socket_fd) {
         port = ntohs(s->sin_port);
         inet_ntop(AF_INET, &s->sin_addr, ipstr, sizeof(ipstr));
     }
-    //return ipstr;
     return std::format("{}:{}", ipstr, std::to_string(port));
 }
 int main() {
@@ -129,7 +133,6 @@ int main() {
         return 1;
     }
 
-    //
     std::vector<std::shared_ptr<ConnectionHandler>> connections;
     std::mutex connectionsMutex;
 

@@ -31,3 +31,12 @@ std::string Commands::getUsersInRoom(std::shared_ptr<ConnectionHandler> conn, st
     return users;
     
 }
+bool Commands::nickAvailable(std::vector<std::shared_ptr<ConnectionHandler>>& connections, const std::string& newNick) {
+    for (const auto& connection : connections) {
+        if (connection->getClientLabel() == newNick) {
+            std::cerr << "2 - nickname change fail (taken nickname)" << std::endl;
+            return false;
+        }
+    }
+    return true;
+}
