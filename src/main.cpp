@@ -39,17 +39,17 @@ void handleClient(std::shared_ptr<ConnectionHandler> conn,
             std::string newNick = rawContent.substr(6);
             if (Commands::nickAvailable(connections, newNick)) {
                 const std::string& message = std::format("{} has changed their nickname to {}", conn->getClientLabel(), newNick);
-                if (newNick == "") {
+                Commands::setNewNickname(conn, newNick);
+                if (newNick != "" ){
+                    broadcastMessage(conn, connections, connectionsMutex, message);
+                    continue;
+                } else {
                     const std::string& nick_failed = "nickname change has failed \n";
                     conn->sendMessage(nick_failed);
                     continue;
-                }         
-                broadcastMessage(conn, connections, connectionsMutex, message);
-                Commands::setNewNickname(conn, newNick);
-                continue;
+                }
         } else {
-            const std::string& nick_failed = "nickname is already taken. \n";
-            conn->sendMessage(nick_failed);
+            conn->sendMessage("nickname is taken. \n");
             continue;
         }
     }
