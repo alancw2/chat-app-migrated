@@ -14,8 +14,8 @@ make run_server
 make run_client
 ```
 # Notes
-- I am current working on compatibility issues on MacOS, this project was built on and for Linux systems.
-- "/who" functionality is still a work in progress.
+- I am current working on compatibility issues on MacOS, this project was built on and for Linux systems and hasn't been attempted to be ran on windows as of yet (3/20/2026).
+- "/help" functionality is still a work in progress.
 
 # Remark
 - If you are trying to run the program and it says the address is already in use run:
