@@ -1,6 +1,6 @@
 # LibChat (C++)
 
-This is a project inspired by my original Chat App which you can see [here.](https://github.com/alancw2/chat-app)
+LibChat is a modular C++ framework designed as a foundation for building custom chat platforms. It currently supports multi-client, room-based communication over local networks with a current focus on clean architecture and thread-safe state managemtn. Future development aims to extend LibChat to support secure multi-network communication and broader deployment scenarios.
 
 ## Build and Run
 ``` sh
