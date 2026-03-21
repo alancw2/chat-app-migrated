@@ -13,6 +13,24 @@ make run_server
 #in another shell, start client instance
 make run_client
 ```
+## Commands
+``` sh
+#list all commands
+/help
+
+#join a new room
+/join <room>
+
+#list all active rooms
+/rooms
+
+#see active users in your room
+/who
+
+#exit
+/quit
+
+```
 # Notes
 - I am current working on compatibility issues on MacOS, this project was built on and for Linux systems and hasn't been attempted to be ran on windows as of yet (3/20/2026).
 - "/help" functionality is still a work in progress.
