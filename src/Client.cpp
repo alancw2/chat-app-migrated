@@ -32,11 +32,16 @@ int main() {
         perror("Socket creation failed");
         return 1;
     }
-
-    sockaddr_in serverAddress;
+    std::string serverIP;
+    sockaddr_in serverAddress{};
     serverAddress.sin_family = AF_INET;
     serverAddress.sin_port = htons(8080);
-    inet_pton(AF_INET, "127.0.0.1", &serverAddress.sin_addr);
+    std::cout << "enter the IP address of the chat-server: ";
+    std::cin >> serverIP;
+
+
+
+    inet_pton(AF_INET, serverIP.c_str(), &serverAddress.sin_addr);
 
     if (connect(sock, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) == -1) {
         perror("Connect failed");
