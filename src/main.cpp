@@ -123,7 +123,10 @@ int main() {
     memset(&serverAddress, 0, sizeof(serverAddress));
     serverAddress.sin_family = AF_INET;
     serverAddress.sin_port = htons(8080);
-    inet_pton(AF_INET, "127.0.0.1", &serverAddress.sin_addr);
+    //inet_pton(AF_INET, "127.0.0.1", &serverAddress.sin_addr);
+    
+    serverAddress.sin_addr.s_addr = INADDR_ANY;
+
     int optval = 1;
     if (setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0) {
         std::cerr << "setsockopt(SO_REUSEADDR) failed" << std::endl;
