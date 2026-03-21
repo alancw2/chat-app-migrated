@@ -27,6 +27,7 @@ void receive_messages(int clientSocket) {
 }
 
 int main() {
+    
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == -1) {
         perror("Socket creation failed");
@@ -49,7 +50,7 @@ int main() {
     }
 
     std::cout << "--- Connected to Chat Server ---" << std::endl;
-    std::cout << "Commands: /nick <name>, /join <room>, /rooms to list active rooms, or /quit to exit." << std::endl;
+    std::cout << "Commands: /help to list all commands, /nick <name>, /join <room>, /rooms to list active rooms, or /quit to exit." << std::endl;
 
     std::thread receiveThread(receive_messages, sock);
     receiveThread.detach();

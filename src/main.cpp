@@ -70,6 +70,10 @@ void handleClient(std::shared_ptr<ConnectionHandler> conn,
             Commands::showRooms(conn, connections);
             continue;
         }
+        if (rawContent.starts_with("/help")) {
+            Commands::showCommands(conn);
+            continue;
+        }
         if (bytes == -1) {
             std::cerr << std::format("receiving data with recv failed from {}", clientSocket) << std::endl;
             break;

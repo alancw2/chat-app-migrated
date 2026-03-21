@@ -14,6 +14,7 @@ namespace Commands {
     std::string getUsersInRoom(std::shared_ptr<ConnectionHandler> conn, std::vector<std::shared_ptr<ConnectionHandler>>& connections);
     bool nickAvailable(std::vector<std::shared_ptr<ConnectionHandler>>& connections, const std::string& newNick);
     void showRooms(std::shared_ptr<ConnectionHandler> conn, std::vector<std::shared_ptr<ConnectionHandler>>& connections);
+    void showCommands(std::shared_ptr<ConnectionHandler> conn);
 }
 
 

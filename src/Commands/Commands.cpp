@@ -50,7 +50,10 @@ void Commands::showRooms(std::shared_ptr<ConnectionHandler> conn, std::vector<st
 	}
 	conn->sendMessage("active rooms: \n");
 	for (std::string room : rooms) {
-		conn->sendMessage(room);
+    	conn->sendMessage(room);
 	}
+}
+void Commands::showCommands(std::shared_ptr<ConnectionHandler> conn) {
+    conn->sendMessage("Commands: /help to list all commands, /nick <name>, /join <room>, /rooms to list active rooms, or /quit to exit.\n");
 }
 
