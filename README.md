@@ -48,4 +48,4 @@ kill <PID>
 ## Author
 **Alan Ward**\
 UIUC Mathematics \
-Github: https://github.com/alancw2/TutorOps 
+Github: https://github.com/alancw2
